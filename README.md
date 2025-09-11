@@ -1,6 +1,7 @@
 # Qwik Snackbar
 
-Made with tailwind, this light weight snackbar module allows for easy usage and easy customization. Not only easy use, but accessibility is builtin, screen readers will read the snackbar once opens and allows for override of text that is read out.
+Made with tailwind, this light weight snackbar module allows for easy usage and easy customization.<br/>
+Not only easy use, but accessibility is built in, screen readers will read the snackbar once opens and allows for override of text that is read out.
 
 ---
 
