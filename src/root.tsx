@@ -1,179 +1,195 @@
-import {
-  $,
-  component$,
-  createContextId,
-  Slot,
-  useContext,
-  useContextProvider,
-  useSignal,
-} from "@builder.io/qwik";
-import {
-  AnimationStyles,
-  IMessageDisplay,
-  ISnackbarContext,
-  ISnackbarOptions,
-  ISnackbarSettings,
-  LocationStyles,
-  VariantStyles,
-} from "./models";
-import { XMark } from "./XMark";
+import { component$, useSignal } from "@builder.io/qwik";
+import { QwikSnackbarProvider, useSnackbarContext } from "./components";
 
-export const SnackbarContext =
-  createContextId<ISnackbarContext>("snackbarcontext");
+const TestComponent = component$(() => {
+  const { enqueueSnackbar$ } = useSnackbarContext();
+  const autoClose = useSignal(true);
+  const variant = useSignal<"default" | "error" | "success" | "warning">(
+    "default",
+  );
 
-export const useSnackbarContext = () => {
-  return useContext(SnackbarContext);
-};
+  const location = useSignal<
+    | "top-right"
+    | "top-left"
+    | "top-center"
+    | "bottom-right"
+    | "bottom-left"
+    | "bottom-center"
+  >("top-right");
 
-const defaultVariants: VariantStyles = {
-  default: "bg-gray-800 text-white",
-  error: "bg-red-600 text-white",
-  success: "bg-green-600 text-white",
-  warning: "bg-yellow-600 text-white",
-};
+  const animation = useSignal<"slide" | "fade">("slide");
+  const animationLocation = useSignal<"top" | "right" | "bottom" | "left">(
+    "right",
+  );
 
-const locationStyles: LocationStyles = {
-  "top-right": "top-5 right-5",
-  "top-left": "top-5 left-5",
-  "top-center": "top-5 left-1/2 transform -translate-x-1/2",
-  "bottom-right": "bottom-5 right-5",
-  "bottom-left": "bottom-5 left-5",
-  "bottom-center": "bottom-5 left-1/2 transform -translate-x-1/2",
-};
+  const duration = useSignal<string>("5000");
 
-const animationStyles: AnimationStyles = {
-  slide: {
-    right: {
-      open: "animate-snackbar-slide-open-from-right",
-      close: "animate-snackbar-slide-close-for-right",
-    },
-    left: {
-      open: "animate-snackbar-slide-open-from-left",
-      close: "animate-snackbar-slide-close-for-left",
-    },
-    top: {
-      open: "animate-snackbar-slide-open-from-top",
-      close: "animate-snackbar-slide-close-for-top",
-    },
-    bottom: {
-      open: "animate-snackbar-slide-open-from-bottom",
-      close: "animate-snackbar-slide-close-for-bottom",
-    },
-  },
-  fade: {
-    open: "animate-snackbar-fade-in",
-    close: "animate-snackbar-fade-out",
-  },
-};
+  return (
+    <div class="flex h-screen w-screen flex-col items-center justify-center">
+      <h1 class="mb-4 text-2xl font-bold">Qwik Snackbar Demo</h1>
 
-export interface ISnackbarContextProviderProps {
-  variants?: VariantStyles;
-}
-
-const defaultLocationSettings = {
-  "top-right": animationStyles.slide.right,
-  "top-left": animationStyles.slide.left,
-  "top-center": animationStyles.slide.top,
-  "bottom-right": animationStyles.slide.right,
-  "bottom-left": animationStyles.slide.left,
-  "bottom-center": animationStyles.slide.bottom,
-};
-
-export default component$<ISnackbarContextProviderProps>(
-  ({ variants = defaultVariants }) => {
-    const snackBarAnimation = useSignal<string>("");
-    const settings = useSignal<ISnackbarSettings>({});
-    const message = useSignal<IMessageDisplay>("");
-
-    const dequeueSnackbar$ = $(() => {
-      if (settings.value.animation === "fade") {
-        snackBarAnimation.value = animationStyles.fade.close;
-      } else {
-        if (settings.value.animationLocation) {
-          snackBarAnimation.value =
-            animationStyles.slide[settings.value.animationLocation].close;
-        } else {
-          snackBarAnimation.value =
-            defaultLocationSettings[
-              settings.value.location || "top-right"
-            ].close;
-        }
-      }
-
-      setTimeout(() => {
-        settings.value = {};
-        message.value = "";
-        snackBarAnimation.value = "";
-      }, 500); // Match the duration of the closing animation
-    });
-
-    const enqueueSnackbar$ = $(
-      (messageDisplay: IMessageDisplay, options?: ISnackbarOptions) => {
-        const {
-          autoClose = false,
-          duration,
-          ...snackbarSettings
-        } = options || {};
-
-        message.value = messageDisplay;
-        settings.value = { ...snackbarSettings, autoClose };
-
-        if (snackbarSettings.animation === "fade") {
-          snackBarAnimation.value = animationStyles.fade.open;
-        } else {
-          if (snackbarSettings.animationLocation) {
-            snackBarAnimation.value =
-              animationStyles.slide[snackbarSettings.animationLocation].open;
-          } else {
-            snackBarAnimation.value =
-              defaultLocationSettings[
-                snackbarSettings.location || "top-right"
-              ].open;
-          }
-        }
-
-        if (autoClose) {
-          setTimeout(() => {
-            dequeueSnackbar$();
-          }, duration || 10000); // Hide after 10 seconds
-        }
-      }
-    );
-
-    useContextProvider(SnackbarContext, { enqueueSnackbar$, dequeueSnackbar$ });
-
-    return (
-      <>
-        {snackBarAnimation.value && (
-          <div
-            class={`fixed z-50 w-auto rounded-md px-4 py-3 opacity-0 shadow-lg ${snackBarAnimation.value} ${locationStyles[settings.value.location || "top-right"]} ${variants[settings.value.variant || "default"]} ${settings.value.class || ""} `}
-            role="alert"
-            aria-live="assertive"
-            aria-atomic="true"
-            aria-label={settings.value.ariaLabel || "Snackbar notification"}
+      <div class="flex items-center gap-4 border-b border-gray-300 pb-4">
+        <div class="flex flex-col items-center">
+          <label for="autoClose" class="mr-2">
+            Auto Close
+          </label>
+          <input
+            type="checkbox"
+            id="autoClose"
+            name="autoClose"
+            class="w-[150px]"
+            checked={autoClose.value}
+            onChange$={() => (autoClose.value = !autoClose.value)}
+          />
+        </div>
+        <div class="flex flex-col items-center">
+          <label for="variant">Variant</label>
+          <select
+            name="variant"
+            id="variant"
+            onChange$={(e) =>
+              (variant.value = (e.target as HTMLSelectElement).value as any)
+            }
+            value={variant.value}
+            class="mt-2 w-[150px] rounded border border-gray-300 p-2"
           >
-            <div class="flex items-center gap-4">
-              {typeof message.value !== "function" ? (
-                message.value
-              ) : (
-                <message.value />
-              )}
-              <button
-                type="button"
-                onClick$={dequeueSnackbar$}
-                class="rounded-full hover:cursor-pointer"
-                aria-label={
-                  settings.value.closeButtonAriaLabel ||
-                  `Close snackbar button, ${settings.value.autoClose ? "this snackbar will close automatically" : "this snackbar will not close automatically"}`
-                }
-              >
-                <XMark />
-              </button>
-            </div>
-          </div>
-        )}
-        <Slot />
-      </>
-    );
-  }
-);
+            <option value="default">Default</option>
+            <option value="error">Error</option>
+            <option value="success">Success</option>
+            <option value="warning">Warning</option>
+          </select>
+        </div>
+        <div class="flex flex-col items-center">
+          <label for="variant">Location</label>
+          <select
+            name="variant"
+            id="variant"
+            onChange$={(e) =>
+              (location.value = (e.target as HTMLSelectElement).value as any)
+            }
+            value={location.value}
+            class="mt-2 w-[150px] rounded border border-gray-300 p-2"
+          >
+            <option value="top-right">Top Right</option>
+            <option value="top-left">Top Left</option>
+            <option value="top-center">Top Center</option>
+            <option value="bottom-right">Bottom Right</option>
+            <option value="bottom-left">Bottom Left</option>
+            <option value="bottom-center">Bottom Center</option>
+          </select>
+        </div>
+        <div class="flex flex-col items-center">
+          <label for="variant">Animation</label>
+          <select
+            name="variant"
+            id="variant"
+            onChange$={(e) =>
+              (animation.value = (e.target as HTMLSelectElement).value as any)
+            }
+            value={animation.value}
+            class="mt-2 w-[150px] rounded border border-gray-300 p-2"
+          >
+            <option value="slide">Slide</option>
+            <option value="fade">Fade</option>
+          </select>
+        </div>
+        <div class="flex flex-col items-center">
+          <label for="variant">Animation Location</label>
+          <select
+            name="variant"
+            id="variant"
+            onChange$={(e) =>
+              (animationLocation.value = (e.target as HTMLSelectElement)
+                .value as any)
+            }
+            value={animationLocation.value}
+            class="mt-2 w-[150px] rounded border border-gray-300 p-2"
+          >
+            <option value="right">Right</option>
+            <option value="left">Left</option>
+            <option value="down">Down</option>
+            <option value="up">Up</option>
+          </select>
+        </div>
+        <div class="flex flex-col items-center">
+          <label for="variant">Duration (ms)</label>
+          <input
+            type="text"
+            placeholder="Duration (ms)"
+            class="mt-2 w-[150px] rounded border border-gray-300 p-2"
+            value={duration.value}
+            onInput$={(e) =>
+              (duration.value = (e.target as HTMLInputElement).value)
+            }
+          />
+        </div>
+      </div>
+      <div class="mt-4 flex items-center gap-4">
+        <button
+          class="mt-4 cursor-pointer rounded-full bg-gray-800 px-4 py-2 font-semibold text-white hover:bg-gray-700"
+          onClick$={() =>
+            enqueueSnackbar$("This is a test message", {
+              variant: variant.value,
+              autoClose: autoClose.value,
+              location: location.value,
+              animation: animation.value,
+              animationLocation: animationLocation.value,
+              duration: parseInt(duration.value),
+            })
+          }
+        >
+          Open Snackbar
+        </button>
+
+        <button
+          class="mt-4 cursor-pointer rounded-full bg-gray-800 px-4 py-2 font-semibold text-white hover:bg-gray-700"
+          onClick$={() =>
+            enqueueSnackbar$(
+              <div class="flex flex-col">
+                <p>
+                  <strong>This is a custom JSX message!</strong>
+                </p>
+                <br />
+                <p>You can put any JSX content here.</p>
+                <br />
+                <a
+                  href="https://www.google.com/"
+                  target="_blank"
+                  class="text-yellow-300 underline"
+                >
+                  Even links!
+                </a>
+              </div>,
+              {
+                variant: variant.value,
+                autoClose: autoClose.value,
+                location: location.value,
+                animation: animation.value,
+                animationLocation: animationLocation.value,
+                duration: parseInt(duration.value),
+              },
+            )
+          }
+        >
+          Open Custom Snackbar
+        </button>
+      </div>
+    </div>
+  );
+});
+
+export default component$(() => {
+  return (
+    <>
+      <head>
+        <meta charset="utf-8" />
+        <title>Qwik Snackbar</title>
+      </head>
+      <body>
+        <QwikSnackbarProvider>
+          <TestComponent />
+        </QwikSnackbarProvider>
+      </body>
+    </>
+  );
+});
