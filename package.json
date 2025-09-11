@@ -21,6 +21,11 @@
   },
   "private": false,
   "type": "module",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/troyerl/qwik-snackbar"
+  },
   "scripts": {
     "build": "qwik build",
     "build.lib": "vite build --mode lib",

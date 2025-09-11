@@ -1,48 +1,76 @@
-# Qwik Library ⚡️
+# Qwik Snackbar
 
-- [Qwik Docs](https://qwik.dev/)
-- [Discord](https://qwik.dev/chat)
-- [Qwik on GitHub](https://github.com/QwikDev/qwik)
-- [@QwikDev](https://twitter.com/QwikDev)
-- [Vite](https://vitejs.dev/)
-- [Partytown](https://partytown.qwik.dev/)
-- [Mitosis](https://github.com/BuilderIO/mitosis)
-- [Builder.io](https://www.builder.io/)
+Made with tailwind, this light weight snackbar module allows for easy usage and easy customization. Not only easy use, but accessibility is builtin, screen readers will read the snackbar once opens and allows for override of text that is read out.
 
 ---
 
-## Project Structure
+## Installation
 
-Inside your project, you'll see the following directories and files:
+`npm i -D qwik-snackbar`
 
-```
-├── public/
-│   └── ...
-└── src/
-    ├── components/
-    │   └── ...
-    └── index.ts
-```
+## Usage
 
-- `src/components`: Recommended directory for components.
+### Setup
 
-- `index.ts`: The entry point of your component library, make sure all the public components are exported from this file.
-
-## Development
-
-Development mode uses [Vite's development server](https://vitejs.dev/). For Qwik during development, the `dev` command will also server-side render (SSR) the output. The client-side development modules are loaded by the browser.
+Wrap QwikSnackbarProvider around root page (this allows for only a single snackbar that can be used anywhere)
 
 ```
-npm run dev
+export default component$(() => {
+  return (
+    <>
+      <head>
+        <meta charset="utf-8" />
+        <title>Qwik Snackbar</title>
+      </head>
+      <body>
+        <QwikSnackbarProvider>
+          <TestComponent />
+        </QwikSnackbarProvider>
+      </body>
+    </>
+  );
+});
 ```
 
-> Note: during dev mode, Vite will request many JS files, which does not represent a Qwik production build.
+### Opening/Closing snackbar
 
-## Production
+Import context in any component <br/>
+`const { enqueueSnackbar$, dequeueSnackbar$ } = useSnackbarContext();`
 
-The production build should generate the production build of your component library in (./lib) and the typescript type definitions in (./lib-types).
+`enqueueSnackbar$`: opens snackbar<br/>
+`dequeueSnackbar$`: closes snackbar
 
-```
-npm run build
-```
-# qwik-snackbar
+## Props
+
+- `QwikSnackbarProvider`
+  - variants (allows for adding custom styles to variants to change the look of any variant)
+    - Object with optional properties
+      - default?: string;
+      - success?: string;
+      - error?: string;
+      - warning?: string;
+
+- `enqueueSnackbar$(messageDisplay: string | (() => JSXOutput) | JSXOutput, options?: Object)`
+  - messageDisplay: string | (() => JSXOutput) | JSXOutput
+  - options
+    - `duration: number`
+      - time in ms
+      - default: 5000
+    - `variant?: "default" | "error" | "success" | "warning"`
+      - default: "default"
+    - `location?: "top-right" | "top-left" | "top-center" | "bottom-right" | "bottom-left" | "bottom-center"`
+      - default: "top-right"
+    - `animation?: "slide" | "fade"`
+      - default: "slide"
+    - `animationLocation?: "top" | "right" | "bottom" | "left"`
+      - default: "right"
+    - `autoClose?: boolean`
+      - default: true
+    - `ariaLabel?: string`
+      - overrides what is initially read from screen reader when snackbar opens, after it reads this it will read the contents of the snackbar
+      - default: "Snackbar notification"
+    - `closeButtonAriaLabel?: string`
+      - overrides what is read for close button from screen reader
+      - default:
+        - autoClose enabled: "Close snackbar button, this snackbar will close automatically"
+        - autoClose disabled: "Close snackbar button, this snackbar will not close automatically"

@@ -135,7 +135,7 @@ export const QwikSnackbarProvider = component$<ISnackbarContextProviderProps>(
         if (autoClose) {
           setTimeout(() => {
             dequeueSnackbar$();
-          }, duration || 10000); // Hide after 10 seconds
+          }, duration || 5000); // Hide after 5 seconds
         }
       },
     );
