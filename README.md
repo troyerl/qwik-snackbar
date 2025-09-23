@@ -5,6 +5,8 @@ Not only for easy use, but accessibility is built in. Screen readers will read t
 
 ---
 
+### Live demo: https://qwik-snackbar-app.vercel.app/
+
 ## Installation
 
 `npm i -D qwik-snackbar`
