@@ -55,7 +55,7 @@ export type IMessageDisplay = string | (() => JSXOutput) | JSXOutput;
 export interface ISnackbarContext {
   enqueueSnackbar$: (
     messageDisplay: IMessageDisplay,
-    options?: ISnackbarOptions
+    options?: ISnackbarOptions,
   ) => void;
   dequeueSnackbar$: () => void;
 }

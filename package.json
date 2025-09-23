@@ -1,15 +1,15 @@
 {
   "name": "qwik-snackbar",
-  "version": "1.0.7",
+  "version": "1.0.12",
   "description": "Snackbar component for Qwik",
   "main": "./lib/index.qwik.mjs",
   "qwik": "./lib/index.qwik.mjs",
   "types": "./lib-types/index.d.ts",
   "exports": {
     ".": {
+      "types": "./lib-types/index.d.ts",
       "import": "./lib/index.qwik.mjs",
-      "require": "./lib/index.qwik.cjs",
-      "types": "./lib-types/index.d.ts"
+      "require": "./lib/index.qwik.cjs"
     }
   },
   "files": [
@@ -51,6 +51,7 @@
     "np": "^8.0.4",
     "prettier": "3.6.2",
     "prettier-plugin-tailwindcss": "^0.6.11",
+    "rollup-plugin-postcss": "^4.0.2",
     "tailwindcss": "^4.1.4",
     "typescript": "5.4.5",
     "typescript-eslint": "8.38.0",

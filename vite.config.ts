@@ -7,7 +7,6 @@ import tailwindcss from "@tailwindcss/vite";
 const { dependencies = {}, peerDependencies = {} } = pkg as any;
 const makeRegex = (dep: string) => new RegExp(`^${dep}(/.*)?$`);
 
-// ✅ Whitelist Tailwind-related packages so they get bundled
 const tailwindWhitelist = ["tailwindcss", "postcss", "autoprefixer"];
 const excludeAll = (obj: Record<string, string>) =>
   Object.keys(obj)
@@ -34,6 +33,11 @@ export default defineConfig(() => {
           ...excludeAll(dependencies),
           ...excludeAll(peerDependencies),
         ],
+      },
+    },
+    css: {
+      modules: {
+        generateScopedName: "[name]__[local]___[hash:base64:5]",
       },
     },
     plugins: [qwikVite(), tsconfigPaths({ root: "." }), tailwindcss()],

@@ -1,7 +1,7 @@
 # Qwik Snackbar
 
 Made with tailwind, this light weight snackbar module allows for easy usage and easy customization.<br/>
-Not only easy use, but accessibility is built in, screen readers will read the snackbar once opens and allows for override of text that is read out.
+Not only for easy use, but accessibility is built in. Screen readers will read the snackbar once open, it also allows for the override of text that is read out.
 
 ---
 
@@ -32,6 +32,12 @@ export default component$(() => {
   );
 });
 ```
+
+### Accessibility
+
+Once open, the screen reader will read out "Snackbar notification" (This can be changed with aria label prop passed to enqueueSnackbar$) and then the contents of the snackbar is read out.
+
+Close button will read out "Close snackbar button, this snackbar will close automatically" or "Close snackbar button, this snackbar will not close automatically" depending on the autoClose prop.
 
 ### Opening/Closing snackbar
 

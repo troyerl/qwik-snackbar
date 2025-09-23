@@ -6,18 +6,19 @@ import {
   useContext,
   useContextProvider,
   useSignal,
+  useStyles$,
 } from "@builder.io/qwik";
-import {
-  AnimationStyles,
-  IMessageDisplay,
-  ISnackbarContext,
-  ISnackbarOptions,
-  ISnackbarSettings,
-  LocationStyles,
-  VariantStyles,
-} from "./models";
 import { XMark } from "./XMark";
-import "../global.css";
+import styles from "../global.css?inline";
+import {
+  ISnackbarContext,
+  VariantStyles,
+  LocationStyles,
+  AnimationStyles,
+  ISnackbarSettings,
+  IMessageDisplay,
+  ISnackbarOptions,
+} from "../models";
 
 const SnackbarContext = createContextId<ISnackbarContext>("snackbarcontext");
 
@@ -33,12 +34,12 @@ const defaultVariants: VariantStyles = {
 };
 
 const locationStyles: LocationStyles = {
-  "top-right": "top-5 right-5",
-  "top-left": "top-5 left-5",
-  "top-center": "top-5 left-1/2 transform -translate-x-1/2",
-  "bottom-right": "bottom-5 right-5",
-  "bottom-left": "bottom-5 left-5",
-  "bottom-center": "bottom-5 left-1/2 transform -translate-x-1/2",
+  "top-right": "top-5 right-5 ml-5",
+  "top-left": "top-5 left-5 mr-5",
+  "top-center": "top-5 left-1/2 mx-5 transform -translate-x-1/2",
+  "bottom-right": "bottom-5 right-5 ml-5",
+  "bottom-left": "bottom-5 left-5 mr-5",
+  "bottom-center": "bottom-5 left-1/2 mx-5 transform -translate-x-1/2",
 };
 
 const animationStyles: AnimationStyles = {
@@ -81,6 +82,7 @@ const defaultLocationSettings = {
 
 export const QwikSnackbarProvider = component$<ISnackbarContextProviderProps>(
   ({ variants = defaultVariants }) => {
+    useStyles$(styles);
     const snackBarAnimation = useSignal<string>("");
     const settings = useSignal<ISnackbarSettings>({});
     const message = useSignal<IMessageDisplay>("");
@@ -104,7 +106,7 @@ export const QwikSnackbarProvider = component$<ISnackbarContextProviderProps>(
         settings.value = {};
         message.value = "";
         snackBarAnimation.value = "";
-      }, 1000); // Match the duration of the closing animation
+      }, 2000); // Match the duration of the closing animation
     });
 
     const enqueueSnackbar$ = $(
