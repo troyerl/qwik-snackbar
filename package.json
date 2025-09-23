@@ -28,6 +28,7 @@
   },
   "scripts": {
     "build": "qwik build",
+    "build.vercel": "vite build --outDir dist --mode ssr",
     "build.lib": "vite build --mode lib",
     "build.types": "tsc --emitDeclarationOnly",
     "build:publish": "npm run build.lib && npm run build.types && npm publish",
