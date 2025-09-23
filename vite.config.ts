@@ -35,6 +35,10 @@ export default defineConfig(() => {
         ],
       },
     },
+    ssr: {
+      target: "node",
+      noExternal: true,
+    },
     css: {
       modules: {
         generateScopedName: "[name]__[local]___[hash:base64:5]",
