@@ -1,26 +1,20 @@
 import { component$, useSignal } from "@builder.io/qwik";
 import { QwikSnackbarProvider, useSnackbarContext } from "./components";
+import {
+  SnackbarLocation,
+  Variants,
+  Animation,
+  AnimationLocation,
+} from "./models";
 
 const TestComponent = component$(() => {
   const { enqueueSnackbar$ } = useSnackbarContext();
   const autoClose = useSignal(true);
-  const variant = useSignal<"default" | "error" | "success" | "warning">(
-    "default",
-  );
+  const variant = useSignal<Variants>("default");
+  const location = useSignal<SnackbarLocation>("top-right");
 
-  const location = useSignal<
-    | "top-right"
-    | "top-left"
-    | "top-center"
-    | "bottom-right"
-    | "bottom-left"
-    | "bottom-center"
-  >("top-right");
-
-  const animation = useSignal<"slide" | "fade">("slide");
-  const animationLocation = useSignal<"top" | "right" | "bottom" | "left">(
-    "right",
-  );
+  const animation = useSignal<Animation>("slide");
+  const animationLocation = useSignal<AnimationLocation>("right");
 
   const duration = useSignal<string>("5000");
 
@@ -47,8 +41,9 @@ const TestComponent = component$(() => {
           <select
             name="variant"
             id="variant"
-            onChange$={(e) =>
-              (variant.value = (e.target as HTMLSelectElement).value as any)
+            onChange$={(e: Event) =>
+              (variant.value = (e.target as HTMLSelectElement)
+                .value as Variants)
             }
             value={variant.value}
             class="mt-2 w-[150px] rounded border border-gray-300 p-2"
@@ -64,8 +59,9 @@ const TestComponent = component$(() => {
           <select
             name="variant"
             id="variant"
-            onChange$={(e) =>
-              (location.value = (e.target as HTMLSelectElement).value as any)
+            onChange$={(e: Event) =>
+              (location.value = (e.target as HTMLSelectElement)
+                .value as SnackbarLocation)
             }
             value={location.value}
             class="mt-2 w-[150px] rounded border border-gray-300 p-2"
@@ -83,8 +79,9 @@ const TestComponent = component$(() => {
           <select
             name="variant"
             id="variant"
-            onChange$={(e) =>
-              (animation.value = (e.target as HTMLSelectElement).value as any)
+            onChange$={(e: Event) =>
+              (animation.value = (e.target as HTMLSelectElement)
+                .value as Animation)
             }
             value={animation.value}
             class="mt-2 w-[150px] rounded border border-gray-300 p-2"
@@ -98,9 +95,9 @@ const TestComponent = component$(() => {
           <select
             name="variant"
             id="variant"
-            onChange$={(e) =>
+            onChange$={(e: Event) =>
               (animationLocation.value = (e.target as HTMLSelectElement)
-                .value as any)
+                .value as AnimationLocation)
             }
             value={animationLocation.value}
             class="mt-2 w-[150px] rounded border border-gray-300 p-2"
@@ -118,7 +115,7 @@ const TestComponent = component$(() => {
             placeholder="Duration (ms)"
             class="mt-2 w-[150px] rounded border border-gray-300 p-2"
             value={duration.value}
-            onInput$={(e) =>
+            onInput$={(e: Event) =>
               (duration.value = (e.target as HTMLInputElement).value)
             }
           />

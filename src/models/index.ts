@@ -1,4 +1,4 @@
-import { JSXOutput } from "@builder.io/qwik";
+import { JSXOutput, QRL } from "@builder.io/qwik";
 
 export type SnackbarLocation =
   | "top-right"
@@ -53,9 +53,8 @@ export interface ISnackbarOptions extends ISnackbarSettings {
 export type IMessageDisplay = string | (() => JSXOutput) | JSXOutput;
 
 export interface ISnackbarContext {
-  enqueueSnackbar$: (
-    messageDisplay: IMessageDisplay,
-    options?: ISnackbarOptions,
-  ) => void;
-  dequeueSnackbar$: () => void;
+  enqueueSnackbar$: QRL<
+    (messageDisplay: IMessageDisplay, options?: ISnackbarOptions) => void
+  >;
+  dequeueSnackbar$: QRL<() => void>;
 }

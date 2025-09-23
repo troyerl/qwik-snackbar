@@ -1,6 +1,6 @@
 {
   "name": "qwik-snackbar",
-  "version": "1.0.12",
+  "version": "1.2.0",
   "description": "Snackbar component for Qwik",
   "main": "./lib/index.qwik.mjs",
   "qwik": "./lib/index.qwik.mjs",
@@ -30,6 +30,7 @@
     "build": "qwik build",
     "build.lib": "vite build --mode lib",
     "build.types": "tsc --emitDeclarationOnly",
+    "build:publish": "npm run build.lib && npm run build.types && npm publish",
     "dev": "vite --mode ssr",
     "dev.debug": "node --inspect-brk ./node_modules/vite/bin/vite.js --mode ssr --force",
     "fmt": "prettier --write .",
