@@ -27,43 +27,44 @@ export const useSnackbarContext = () => {
 };
 
 const defaultVariants: VariantStyles = {
-  default: "bg-gray-800 text-white",
-  error: "bg-red-600 text-white",
-  success: "bg-green-600 text-white",
-  warning: "bg-yellow-600 text-white",
+  default: "qwik-snackbar-default",
+  error: "qwik-snackbar-error",
+  success: "qwik-snackbar-success",
+  warning: "qwik-snackbar-warning",
 };
 
+// Update the locationStyles object
 const locationStyles: LocationStyles = {
-  "top-right": "top-5 right-5 ml-5",
-  "top-left": "top-5 left-5 mr-5",
-  "top-center": "top-5 left-1/2 mx-5 transform -translate-x-1/2",
-  "bottom-right": "bottom-5 right-5 ml-5",
-  "bottom-left": "bottom-5 left-5 mr-5",
-  "bottom-center": "bottom-5 left-1/2 mx-5 transform -translate-x-1/2",
+  "top-right": "qwik-snackbar-top-right",
+  "top-left": "qwik-snackbar-top-left",
+  "top-center": "qwik-snackbar-top-center",
+  "bottom-right": "qwik-snackbar-bottom-right",
+  "bottom-left": "qwik-snackbar-bottom-left",
+  "bottom-center": "qwik-snackbar-bottom-center",
 };
 
 const animationStyles: AnimationStyles = {
   slide: {
     right: {
-      open: "animate-snackbar-slide-open-from-right",
-      close: "animate-snackbar-slide-close-for-right",
+      open: "qwik-snackbar-animate-slide-open-right",
+      close: "qwik-snackbar-animate-slide-close-right",
     },
     left: {
-      open: "animate-snackbar-slide-open-from-left",
-      close: "animate-snackbar-slide-close-for-left",
+      open: "qwik-snackbar-animate-slide-open-left",
+      close: "qwik-snackbar-animate-slide-close-left",
     },
     top: {
-      open: "animate-snackbar-slide-open-from-top",
-      close: "animate-snackbar-slide-close-for-top",
+      open: "qwik-snackbar-animate-slide-open-top",
+      close: "qwik-snackbar-animate-slide-close-top",
     },
     bottom: {
-      open: "animate-snackbar-slide-open-from-bottom",
-      close: "animate-snackbar-slide-close-for-bottom",
+      open: "qwik-snackbar-animate-slide-open-bottom",
+      close: "qwik-snackbar-animate-slide-close-bottom",
     },
   },
   fade: {
-    open: "animate-snackbar-fade-in",
-    close: "animate-snackbar-fade-out",
+    open: "qwik-snackbar-animate-fade-in",
+    close: "qwik-snackbar-animate-fade-out",
   },
 };
 
@@ -86,8 +87,14 @@ export const QwikSnackbarProvider = component$<ISnackbarContextProviderProps>(
     const snackBarAnimation = useSignal<string>("");
     const settings = useSignal<ISnackbarSettings>({});
     const message = useSignal<IMessageDisplay>("");
+    const isClosing = useSignal(false);
+    const isVisible = useSignal(false);
 
     const dequeueSnackbar$ = $(() => {
+      if (isClosing.value) return;
+      isClosing.value = true;
+
+      // Set closing animation
       if (settings.value.animation === "fade") {
         snackBarAnimation.value = animationStyles.fade.close;
       } else {
@@ -102,15 +109,20 @@ export const QwikSnackbarProvider = component$<ISnackbarContextProviderProps>(
         }
       }
 
+      // Wait for animation to complete before removing the component
       setTimeout(() => {
+        isVisible.value = false;
         settings.value = {};
         message.value = "";
         snackBarAnimation.value = "";
-      }, 2000); // Match the duration of the closing animation
+        isClosing.value = false;
+      }, 500);
     });
 
     const enqueueSnackbar$ = $(
       (messageDisplay: IMessageDisplay, options?: ISnackbarOptions) => {
+        if (isClosing.value) return;
+
         const {
           autoClose = false,
           duration,
@@ -119,6 +131,7 @@ export const QwikSnackbarProvider = component$<ISnackbarContextProviderProps>(
 
         message.value = messageDisplay;
         settings.value = { ...snackbarSettings, autoClose };
+        isVisible.value = true;
 
         if (snackbarSettings.animation === "fade") {
           snackBarAnimation.value = animationStyles.fade.open;
@@ -137,7 +150,7 @@ export const QwikSnackbarProvider = component$<ISnackbarContextProviderProps>(
         if (autoClose) {
           setTimeout(() => {
             dequeueSnackbar$();
-          }, duration || 5000); // Hide after 5 seconds
+          }, duration || 5000);
         }
       },
     );
@@ -146,15 +159,19 @@ export const QwikSnackbarProvider = component$<ISnackbarContextProviderProps>(
 
     return (
       <div>
-        {snackBarAnimation.value && (
+        {isVisible.value && (
           <div
-            class={`fixed z-50 w-auto rounded-md px-4 py-3 opacity-0 shadow-lg ${snackBarAnimation.value} ${locationStyles[settings.value.location || "top-right"]} ${variants[settings.value.variant || "default"]} ${settings.value.class || ""} `}
+            class={`qwik-snackbar-container ${snackBarAnimation.value} ${
+              locationStyles[settings.value.location || "top-right"]
+            } ${variants[settings.value.variant || "default"]} ${
+              settings.value.class || ""
+            }`}
             role="alert"
             aria-live="assertive"
             aria-atomic="true"
             aria-label={settings.value.ariaLabel || "Snackbar notification"}
           >
-            <div class="flex items-center gap-4">
+            <div class="qwik-snackbar-content">
               {typeof message.value !== "function" ? (
                 message.value
               ) : (
@@ -163,10 +180,14 @@ export const QwikSnackbarProvider = component$<ISnackbarContextProviderProps>(
               <button
                 type="button"
                 onClick$={dequeueSnackbar$}
-                class="rounded-full hover:cursor-pointer"
+                class="qwik-snackbar-close-button"
                 aria-label={
                   settings.value.closeButtonAriaLabel ||
-                  `Close snackbar button, ${settings.value.autoClose ? "this snackbar will close automatically" : "this snackbar will not close automatically"}`
+                  `Close snackbar button, ${
+                    settings.value.autoClose
+                      ? "this snackbar will close automatically"
+                      : "this snackbar will not close automatically"
+                  }`
                 }
               >
                 <XMark />

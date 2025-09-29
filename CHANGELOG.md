@@ -1,3 +1,7 @@
+# 1.3.0
+
+- remove: tailwindcss, caused issues with consumers using tailwindcss
+
 # 1.2.0
 
 - fix: dequeueSnackbar$ and enqueueSnackbar$ types are now QRL's
