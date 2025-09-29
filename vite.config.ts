@@ -2,16 +2,12 @@ import { defineConfig } from "vite";
 import pkg from "./package.json";
 import { qwikVite } from "@builder.io/qwik/optimizer";
 import tsconfigPaths from "vite-tsconfig-paths";
-import tailwindcss from "@tailwindcss/vite";
 
 const { dependencies = {}, peerDependencies = {} } = pkg as any;
 const makeRegex = (dep: string) => new RegExp(`^${dep}(/.*)?$`);
 
-const tailwindWhitelist = ["tailwindcss", "postcss", "autoprefixer"];
 const excludeAll = (obj: Record<string, string>) =>
-  Object.keys(obj)
-    .filter((dep) => !tailwindWhitelist.includes(dep))
-    .map(makeRegex);
+  Object.keys(obj).map(makeRegex);
 
 export default defineConfig(() => {
   return {
@@ -44,6 +40,6 @@ export default defineConfig(() => {
         generateScopedName: "[name]__[local]___[hash:base64:5]",
       },
     },
-    plugins: [qwikVite(), tsconfigPaths({ root: "." }), tailwindcss()],
+    plugins: [qwikVite(), tsconfigPaths({ root: "." })],
   };
 });
