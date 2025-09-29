@@ -1,3 +1,7 @@
+# 1.3.1
+
+- update: readme to remove tailwindcss
+
 # 1.3.0
 
 - remove: tailwindcss, caused issues with consumers using tailwindcss
